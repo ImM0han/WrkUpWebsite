@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WrkUp — Find Skilled Work Near You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#ff7c2e;
+  --brown:#481b01;
+  --cream:#fdf6ee;
+  --orange-dark:#e0620f;
+  --orange-light:#ff9a5e;
+  --orange-pale:#fff0e6;
+  --brown-mid:#7a3510;
+  --brown-light:#c06535;
+  --cream-dark:#f0e0cc;
+  --cream-mid:#e8cdb0;
+  --text:#1e0d00;
+  --text-mid:#5c2d00;
+  --text-soft:#9a6040;
+  --white:#ffffff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;line-height:1.05;letter-spacing:-0.5px;font-stretch:normal}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* ─── CUSTOM CURSOR ─── */
+.cursor{
+  width:12px;height:12px;
+  background:var(--orange);
+  border-radius:50%;
+  position:fixed;z-index:9999;pointer-events:none;
+  transition:transform 0.15s ease,width 0.2s,height 0.2s;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:multiply;
+}
+.cursor-ring{
+  width:36px;height:36px;
+  border:1.5px solid var(--orange);
+  border-radius:50%;
+  position:fixed;z-index:9998;pointer-events:none;
+  transition:transform 0.35s ease,width 0.3s,height 0.3s,opacity 0.3s;
+  transform:translate(-50%,-50%);
+  opacity:0.5;
+}
+.cursor.expand{width:24px;height:24px}
+.cursor-ring.expand{width:60px;height:60px;opacity:0.2}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;height:70px;
+  transition:background 0.4s,box-shadow 0.4s;
+  background:rgba(253,246,238,0.92);
+}
+nav.scrolled{
+  background:rgba(253,246,238,0.92);
+  backdrop-filter:blur(16px);
+  box-shadow:0 1px 0 var(--cream-dark);
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-stretch:normal;
+  font-weight:800;font-size:1.6rem;color:var(--brown);
+  letter-spacing:-0.5px;
+}
+.nav-logo em{color:var(--orange);font-style:normal;margin-right: 20px;}
+.nav-links{display:flex;gap:2.2rem;list-style:none;margin-right: 20px;}
+.nav-links a{
+  color:var(--text-mid);font-size:0.9rem;font-weight:500;
+  position:relative;transition:color 0.2s;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;right:0;
+  height:1.5px;background:var(--orange);
+  transform:scaleX(0);transition:transform 0.25s ease;transform-origin:left;
+}
+.nav-links a:hover{color:var(--orange)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-actions{display:flex;gap:0.75rem;align-items:center}
+
+.btn-nav-ghost:hover{border-color:var(--orange);color:var(--orange)}
+.btn-nav-fill{
+  background:var(--orange);color:#fff;font-size:0.88rem;font-weight:500;
+  padding:0.52rem 1.4rem;border-radius:999px;
+  box-shadow:0 4px 16px rgba(255,124,46,0.35);
+  transition:background 0.2s,transform 0.2s,box-shadow 0.2s;
+}
+.btn-nav-fill:hover{background:var(--orange-dark);transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,124,46,0.45)}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:10px}
+.ham span{width:22px;height:2px;background:var(--brown);border-radius:2px;transition:all 0.3s}
+.mob-menu{
+  display:none;flex-direction:column;
+  position:fixed;top:70px;left:0;right:0;z-index:499;
+  background:var(--cream);border-bottom:1px solid var(--cream-dark);
+  padding:1.5rem 5vw 2rem;gap:1.2rem;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{color:var(--text-mid);font-size:1.1rem;font-weight:500}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:100vh;
+  background:var(--brown);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:100px 5vw 80px;
+}
+/* animated grain texture */
+.hero-grain{
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.5;pointer-events:none;
+}
+.hero-blob1{
+  position:absolute;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,124,46,0.22) 0%,transparent 70%);
+  top:-200px;right:-100px;pointer-events:none;
+  animation:blobMove1 8s ease-in-out infinite;
+}
+.hero-blob2{
+  position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,154,94,0.12) 0%,transparent 70%);
+  bottom:-100px;left:5%;pointer-events:none;
+  animation:blobMove2 10s ease-in-out infinite;
+}
+@keyframes blobMove1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-40px,30px) scale(1.08)}}
+@keyframes blobMove2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.06)}}
+.hero-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:3rem;
+  align-items:center;position:relative;z-index:2;
+  max-width:1200px;margin:0 auto;width:100%;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:rgba(255,124,46,0.15);
+  border:1px solid rgba(255,124,46,0.3);
+  color:var(--orange-light);
+  font-size:0.78rem;font-weight:600;
+  padding:0.35rem 0.9rem;border-radius:999px;margin-bottom:1.6rem;
+}
+.hero-eyebrow .dot{
+  width:7px;height:7px;background:var(--orange);border-radius:50%;
+  animation:livepulse 2s infinite;
+}
+@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+.hero h1{
+  font-size:clamp(2.8rem,5.5vw,4.8rem);
+  font-weight:800;letter-spacing:-2px;
+  color:#fff;margin-bottom:1.4rem;
+}
+.hero h1 .orange{color:var(--orange)}
+.hero h1 .fade{color:rgba(255,255,255,0.35)}
+.hero-sub{
+  color:rgba(255,255,255,0.55);
+  font-size:1.05rem;line-height:1.75;max-width:480px;margin-bottom:2.4rem;
+}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.btn-hero-fill{
+  background:var(--orange);color:#fff;
+  padding:0.9rem 2.2rem;border-radius:999px;
+  font-size:1rem;font-weight:700;
+  box-shadow:0 8px 32px rgba(255,124,46,0.45);
+  transition:background 0.2s,transform 0.2s,box-shadow 0.2s;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.btn-hero-fill:hover{background:var(--orange-dark);transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,124,46,0.55)}
+.btn-hero-ghost{
+  border:1.5px solid rgba(255,255,255,0.2);color:#fff;
+  padding:0.9rem 2.2rem;border-radius:999px;
+  font-size:1rem;font-weight:500;
+  display:flex;align-items:center;gap:0.5rem;
+  transition:border-color 0.2s,background 0.2s;
+}
+.btn-hero-ghost:hover{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.07)}
+.hero-stats{display:flex;gap:2.5rem}
+.hs-num{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;
+}
+.hs-num span{color:var(--orange)}
+.hs-label{font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* phone mockup */
+.hero-right{position:relative;display:flex;justify-content:center;align-items:center}
+.phone{
+  width:270px;height:550px;
+  border:2.5px solid rgba(255,255,255,0.12);
+  border-radius:42px;
+  background:var(--brown);
+  overflow:hidden;position:relative;
+  box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.05),inset 0 0 0 1px rgba(255,255,255,0.04);
+  animation:phoneFloat 5s ease-in-out infinite;
+}
+@keyframes phoneFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-20px) rotate(-2deg)}}
+.phone-notch{
+  width:70px;height:20px;
+  background:var(--brown);border-radius:0 0 14px 14px;
+  border:2px solid rgba(255,255,255,0.12);border-top:none;
+  position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10;
+}
+.phone-screen{
+  width:100%;height:100%;
+  background:linear-gradient(160deg,#3a1200 0%,#200a00 100%);
+  padding:34px 14px 14px;
+  display:flex;flex-direction:column;gap:8px;overflow:hidden;
+}
+.ps-top{
+  background:rgba(255,124,46,0.12);border:1px solid rgba(255,124,46,0.2);
+  border-radius:12px;padding:12px;
+}
+.ps-hello{color:rgba(255,255,255,0.5);font-size:0.6rem}
+.ps-name{color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;margin-top:1px}
+.ps-bal{color:var(--orange);font-size:1.1rem;font-weight:700;margin-top:4px}
+.ps-online-row{display:flex;align-items:center;gap:5px;margin-top:5px}
+.ps-onlinedot{width:6px;height:6px;background:#4ade80;border-radius:50%}
+.ps-onlabel{color:rgba(255,255,255,0.5);font-size:0.58rem}
+.ps-sec{color:rgba(255,255,255,0.35);font-size:0.58rem;font-weight:700;letter-spacing:0.5px;margin-top:2px}
+.jm{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;padding:9px;
+}
+.jm-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.jm-badge{
+  font-size:0.52rem;font-weight:700;padding:2px 7px;border-radius:99px;
+}
+.jm-badge.mason{background:rgba(255,124,46,0.18);color:#ff9a5e}
+.jm-badge.elec{background:rgba(59,130,246,0.18);color:#93c5fd}
+.jm-badge.plumb{background:rgba(139,92,246,0.18);color:#c4b5fd}
+.jm-dist{color:rgba(255,255,255,0.3);font-size:0.55rem}
+.jm-title{color:#fff;font-size:0.68rem;font-weight:600}
+.jm-sub{color:rgba(255,255,255,0.35);font-size:0.55rem;margin-top:2px}
+.jm-btns{display:flex;gap:4px;margin-top:7px}
+.jm-acc{flex:1;background:var(--orange);color:#fff;font-size:0.55rem;font-weight:700;padding:4px;border-radius:6px;text-align:center}
+.jm-rej{flex:1;border:1px solid rgba(220,38,38,0.35);color:#fca5a5;font-size:0.55rem;font-weight:600;padding:4px;border-radius:6px;text-align:center}
+
+/* floating badges */
+.fbadge{
+  position:absolute;background:var(--cream);border-radius:14px;
+  padding:10px 14px;box-shadow:0 8px 32px rgba(72,27,1,0.2);
+  display:flex;align-items:center;gap:10px;
+}
+.fb1{top:70px;left:-100px;animation:fbFloat 4s ease-in-out infinite}
+.fb2{bottom:120px;right:-100px;animation:fbFloat 4s ease-in-out infinite 2s}
+@keyframes fbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.fb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.fb-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--brown)}
+.fb-sub{font-size:0.58rem;color:var(--text-soft)}
+
+/* ─── MARQUEE TRUST BAR ─── */
+.marquee-bar{
+  background:var(--orange);padding:0.85rem 0;overflow:hidden;
+}
+.marquee-inner{
+  display:flex;gap:0;
+  animation:marqueeScroll 20s linear infinite;
+  width:max-content;
+}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{
+  display:flex;align-items:center;gap:0.5rem;
+  white-space:nowrap;color:#fff;font-size:0.85rem;font-weight:600;
+  padding:0 2.5rem;border-right:1px solid rgba(255,255,255,0.25);
+}
+.marquee-sep{color:rgba(255,255,255,0.4);font-size:0.8rem}
+
+/* ─── SECTION BASE ─── */
+section{padding:6rem 5vw}
+.container{max-width:1200px;margin:0 auto;width:100%}
+.s-tag{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  background:var(--orange-pale);color:var(--orange-dark);
+  font-size:0.75rem;font-weight:700;
+  padding:0.3rem 0.85rem;border-radius:999px;margin-bottom:1rem;
+  border:1px solid rgba(255,124,46,0.2);
+}
+.s-title{
+  font-size:clamp(2.2rem,4vw,3.2rem);
+  font-weight:800;letter-spacing:-1.5px;
+  color:var(--brown);margin-bottom:0.9rem;
+}
+.s-sub{color:var(--text-soft);font-size:1rem;line-height:1.75;max-width:520px}
+
+/* ─── HOW IT WORKS ─── */
+.how{background:var(--cream)}
+.how-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;
+  align-items:center;margin-top:3.5rem;
+}
+.htabs{display:flex;gap:0.4rem;margin-bottom:2rem;
+  background:var(--cream-dark);border-radius:999px;padding:4px;width:fit-content}
+.htab{
+  padding:0.5rem 1.4rem;border-radius:999px;font-size:0.85rem;font-weight:600;
+  border:none;cursor:pointer;background:transparent;color:var(--text-soft);
+  transition:all 0.25s;
+}
+.htab.active{background:var(--orange);color:#fff;box-shadow:0 4px 16px rgba(255,124,46,0.3)}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{
+  display:flex;gap:1.2rem;padding:1.2rem 0;
+  border-bottom:1px solid var(--cream-dark);
+  opacity:0;transform:translateX(-16px);
+  transition:opacity 0.5s ease,transform 0.5s ease;
+}
+.step.vis{opacity:1;transform:none}
+.step:last-child{border-bottom:none}
+.step-n{
+  width:36px;height:36px;flex-shrink:0;
+  background:var(--orange-pale);color:var(--orange);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;
+  border:1px solid rgba(255,124,46,0.2);
+}
+.step-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--brown);margin-bottom:0.3rem}
+.step-desc{font-size:0.87rem;color:var(--text-soft);line-height:1.65}
+
+/* map visual */
+
+.map-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#2a0d00 0%,#481b01 50%,#1e0900 100%);
+}
+.map-grid{
+  position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,124,46,0.05) 0,rgba(255,124,46,0.05) 1px,transparent 1px,transparent 55px),
+    repeating-linear-gradient(90deg,rgba(255,124,46,0.05) 0,rgba(255,124,46,0.05) 1px,transparent 1px,transparent 55px);
+}
+.mpin{
+  position:absolute;width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--brown);
+}
+.mpin.p{background:var(--orange)}
+.mpin.c{background:var(--cream)}
+.mpin.p1{top:30%;left:38%}.mpin.p2{top:55%;left:62%}.mpin.p3{top:22%;left:68%}
+.mpin.c1{top:48%;left:44%}
+.mradius{
+  position:absolute;
+  border:1.5px dashed rgba(255,124,46,0.35);border-radius:50%;
+  top:48%;left:44%;width:130px;height:130px;
+  transform:translate(-50%,-50%);
+  animation:radiusPulse 3s ease-in-out infinite;
+}
+@keyframes radiusPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.8}50%{transform:translate(-50%,-50%) scale(1.4);opacity:0.2}}
+.mcard{
+  position:absolute;bottom:18px;left:18px;right:18px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;padding:14px;
+}
+.mcard-title{color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;margin-bottom:8px}
+.mcard-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.mcard-label{color:rgba(255,255,255,0.4);font-size:0.72rem}
+.mcard-val{color:var(--orange);font-size:0.72rem;font-weight:600}
+
+/* ─── WHO IS IT FOR ─── */
+.who{background:var(--brown)}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+.who-card{border-radius:20px;padding:2.5rem;position:relative;overflow:hidden}
+.who-card.partner{background:var(--orange);color:#fff}
+.who-card.client{background:var(--cream);border:1px solid var(--cream-dark)}
+.wc-tag{
+  display:inline-block;font-size:0.7rem;font-weight:700;
+  padding:0.3rem 0.8rem;border-radius:999px;margin-bottom:1rem;
+}
+.who-card.partner .wc-tag{background:rgba(0,0,0,0.15);color:#fff}
+.who-card.client .wc-tag{background:var(--orange-pale);color:var(--orange-dark)}
+.wc-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;line-height:1.1;margin-bottom:0.8rem}
+.who-card.partner .wc-title{color:#fff}
+.who-card.client .wc-title{color:var(--brown)}
+.wc-desc{font-size:0.9rem;line-height:1.65;margin-bottom:1.5rem}
+.who-card.partner .wc-desc{color:rgba(255,255,255,0.75)}
+.who-card.client .wc-desc{color:var(--text-soft)}
+.wc-list{list-style:none;display:flex;flex-direction:column;gap:0.55rem;margin-bottom:1.8rem}
+.wc-list li{display:flex;align-items:center;gap:0.6rem;font-size:0.87rem}
+.who-card.partner .wc-list li{color:rgba(255,255,255,0.85)}
+.who-card.client .wc-list li{color:var(--text-mid)}
+.wc-check-p{color:rgba(255,255,255,0.6)}
+.wc-check-c{color:var(--orange)}
+.wc-btn{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  padding:0.72rem 1.6rem;border-radius:999px;font-weight:700;font-size:0.9rem;
+  transition:all 0.2s;
+}
+.who-card.partner .wc-btn{background:rgba(0,0,0,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.3)}
+.who-card.partner .wc-btn:hover{background:rgba(0,0,0,0.35)}
+.who-card.client .wc-btn{background:var(--orange);color:#fff;box-shadow:0 4px 16px rgba(255,124,46,0.35)}
+.who-card.client .wc-btn:hover{background:var(--orange-dark);transform:translateY(-2px)}
+/* card decorative blob */
+.wc-blob{
+  position:absolute;width:200px;height:200px;border-radius:50%;
+  opacity:0.15;pointer-events:none;
+}
+.who-card.partner .wc-blob{background:rgba(0,0,0,0.3);bottom:-60px;right:-60px}
+.who-card.client .wc-blob{background:var(--orange);bottom:-60px;right:-60px}
+
+/* ─── WATCH & LEARN (VIDEO GUIDES) ─── */
+.watch-guide{background:var(--cream-dark)}
+.wg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+.wg-card{
+  background:#fff;border-radius:20px;overflow:hidden;
+  border:1px solid var(--cream-mid);
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.wg-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(72,27,1,0.12)}
+.wg-video-wrap{
+  position:relative;width:100%;aspect-ratio:16/9;
+  background:var(--brown);overflow:hidden;
+}
+.wg-video-wrap iframe{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;border:0;display:block;
+}
+.wg-tagrow{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.6rem 0.4rem}
+.wg-badge{
+  font-size:0.72rem;font-weight:700;padding:0.3rem 0.8rem;border-radius:999px;
+}
+.wg-badge.partner{background:var(--orange-pale);color:var(--orange-dark)}
+.wg-badge.client{background:#e9eefb;color:#3b5bdb}
+.wg-dur{font-size:0.75rem;color:var(--text-soft)}
+.wg-body{padding:0.6rem 1.6rem 1.6rem}
+.wg-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--brown);margin-bottom:0.4rem}
+.wg-desc{font-size:0.85rem;color:var(--text-soft);line-height:1.6}
+@media(max-width:900px){.wg-grid{grid-template-columns:1fr}}
+
+/* ─── FEATURES ─── */
+.features{background:var(--cream)}
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem;
+}
+.feat-card{
+  background:#fff;border-radius:20px;padding:2rem;
+  border:1px solid var(--cream-dark);
+  transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s;
+}
+.feat-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 48px rgba(72,27,1,0.1);
+  border-color:var(--orange-light);
+}
+.feat-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:1.2rem;
+  background:var(--orange-pale);
+}
+.feat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--brown);margin-bottom:0.5rem}
+.feat-desc{font-size:0.87rem;color:var(--text-soft);line-height:1.65}
+
+/* ─── CATEGORIES ─── */
+.categories{background:var(--cream-dark)}
+.cat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.5rem;
+}
+.cat-card{
+  background:#fff;border-radius:18px;padding:1.8rem 1.2rem;
+  text-align:center;border:1px solid var(--cream-dark);
+  cursor:pointer;transition:all 0.25s;
+}
+.cat-card:hover{
+  background:var(--orange);border-color:var(--orange);
+  transform:translateY(-4px);
+  box-shadow:0 12px 36px rgba(255,124,46,0.3);
+}
+.cat-card:hover .cat-name,.cat-card:hover .cat-count{color:#fff}
+.cat-emoji{font-size:2.2rem;margin-bottom:0.8rem}
+.cat-name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--brown);transition:color 0.25s}
+.cat-count{font-size:0.75rem;color:var(--text-soft);margin-top:3px;transition:color 0.25s}
+
+/* ─── NUMBERS SECTION ─── */
+.numbers{background:var(--orange);padding:5rem 5vw}
+.numbers-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;
+  max-width:1200px;margin:0 auto;
+}
+.ncard{text-align:center}
+.n-num{
+  font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;
+  color:#fff;line-height:1;margin-bottom:0.4rem;
+}
+.n-label{color:rgba(255,255,255,0.7);font-size:0.9rem}
+.n-divider{
+  width:1px;background:rgba(255,255,255,0.2);
+  align-self:stretch;margin:0.5rem 0;
+}
+
+/* ─── TESTIMONIALS ─── */
+.testimonials{background:var(--brown)}
+.testi-title-wrap{margin-bottom:3rem}
+.testi-title-wrap .s-title{color:#fff}
+.testi-title-wrap .s-tag{background:rgba(255,124,46,0.15);color:var(--orange-light);border-color:rgba(255,124,46,0.3)}
+.testi-overflow{overflow:hidden}
+.testi-track{
+  display:flex;gap:1.2rem;width:max-content;
+  animation:tscroll 35s linear infinite;
+}
+.testi-track:hover{animation-play-state:paused}
+@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tcard{
+  width:310px;flex-shrink:0;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;padding:1.8rem;
+}
+.tc-stars{color:var(--orange);font-size:0.85rem;margin-bottom:0.8rem;letter-spacing:1px}
+.tc-text{
+  font-size:0.88rem;color:rgba(255,255,255,0.7);
+  line-height:1.7;margin-bottom:1.2rem;font-style:italic;
+}
+.tc-author{display:flex;align-items:center;gap:0.8rem}
+.tc-av{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:0.85rem;color:#fff;flex-shrink:0;
+}
+.tc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.82rem;color:#fff}
+.tc-role{font-size:0.72rem;color:rgba(255,255,255,0.4)}
+
+/* ─── DOWNLOAD ─── */
+.download{
+  background:var(--cream);
+  text-align:center;
+}
+.dl-subtitle{color:var(--text-soft);font-size:1rem;line-height:1.7;max-width:480px;margin:0 auto 2.5rem}
+.dl-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem}
+.dl-btn{
+  display:flex;align-items:center;gap:0.9rem;
+  background:var(--brown);color:#fff;
+  padding:0.9rem 1.8rem;border-radius:16px;
+  transition:all 0.25s;
+  border:2px solid transparent;
+}
+.dl-btn:hover{
+  background:transparent;color:var(--brown);
+  border-color:var(--brown);transform:translateY(-3px);
+}
+.dl-icon{font-size:1.8rem}
+.dl-small{font-size:0.68rem;color:inherit;opacity:0.6}
+.dl-store{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem}
+.qr-row{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap}
+.qr-item{text-align:center}
+.qr-box{
+  width:110px;height:110px;background:var(--brown);
+  border-radius:14px;margin:0 auto 0.7rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-inner{
+  width:88px;height:88px;
+  background:repeating-conic-gradient(var(--cream) 0% 25%,var(--brown) 0% 50%) 0 0/8px 8px;
+  border-radius:4px;
+}
+.qr-label{color:var(--text-soft);font-size:0.8rem}
+
+/* ─── FAQ ─── */
+.faq{background:var(--cream-dark)}
+.faq-inner{max-width:680px;margin:2.5rem auto 0}
+.faq-item{border-bottom:1px solid var(--cream-mid)}
+.faq-q{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:1.2rem 0;background:none;border:none;cursor:pointer;text-align:left;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:0.97rem;color:var(--brown);
+}
+.faq-arrow{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:var(--cream);color:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;transition:transform 0.3s,background 0.2s;
+}
+.faq-q.open .faq-arrow{transform:rotate(45deg);background:var(--orange);color:#fff}
+.faq-a{
+  max-height:0;overflow:hidden;
+  font-size:0.9rem;color:var(--text-soft);line-height:1.7;
+  transition:max-height 0.4s ease;
+}
+.faq-a.open{max-height:200px;padding-bottom:1.2rem}
+
+/* ─── FOOTER ─── */
+footer{background:var(--brown);padding:4.5rem 5vw 2rem}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;
+  padding-bottom:3rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:2rem;
+}
+.f-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:#fff;margin-bottom:0.9rem}
+.f-logo em{color:var(--orange);font-style:normal}
+.f-desc{color:rgba(255,255,255,0.4);font-size:0.85rem;line-height:1.7;max-width:240px;margin-bottom:1.2rem}
+.f-social{display:flex;gap:0.6rem}
+.f-soc-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:rgba(255,255,255,0.07);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.5);font-size:0.85rem;
+  transition:background 0.2s,color 0.2s;
+}
+.f-soc-btn:hover{background:var(--orange);color:#fff}
+.f-col h4{color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:1rem}
+.f-col ul{list-style:none;display:flex;flex-direction:column;gap:0.55rem}
+.f-col ul a{color:rgba(255,255,255,0.4);font-size:0.85rem;transition:color 0.2s}
+.f-col ul a:hover{color:var(--orange-light)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  color:rgba(255,255,255,0.25);font-size:0.8rem;flex-wrap:wrap;gap:0.5rem;
+}
+
+/* ─── SCROLL REVEAL ─── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.vis{opacity:1;transform:none}
+.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-left.vis{opacity:1;transform:none}
+.reveal-right{opacity:0;transform:translateX(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-right.vis{opacity:1;transform:none}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;text-align:center}
+  .hero-sub{margin:0 auto 2rem}
+  .hero-btns{justify-content:center}
+  .hero-stats{justify-content:center}
+  .hero-right{display:none}
+  .how-grid{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .who-grid{grid-template-columns:1fr}
+  .numbers-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .ham{display:flex}
+  .fb1,.fb2{display:none}
+}
+@media(max-width:600px){
+  section{padding:4rem 5vw}
+  .feat-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .numbers-grid{grid-template-columns:1fr 1fr}
+}
+/* ─── POPUP OVERLAY ─── */
+.popup-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(30,13,0,0.65);
+  backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+.popup-overlay.open{opacity:1;pointer-events:all}
+
+.popup-box{
+  background:var(--cream);
+  border-radius:24px;
+  width:100%;max-width:540px;
+  max-height:85vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 32px 80px rgba(72,27,1,0.3);
+  transform:translateY(28px) scale(0.97);
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  overflow:hidden;
+}
+.popup-overlay.open .popup-box{transform:translateY(0) scale(1)}
+.popup-box.contact-box{max-width:420px}
+
+.popup-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.5rem 1.8rem 1.2rem;
+  border-bottom:1px solid var(--cream-dark);
+  flex-shrink:0;
+}
+.popup-head-left{display:flex;align-items:center;gap:0.8rem}
+.popup-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;background:var(--orange-pale);flex-shrink:0;
+}
+.popup-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:var(--brown);
+}
+.popup-close{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;background:var(--cream-dark);
+  color:var(--text-soft);font-size:1.1rem;
+  transition:background 0.2s,color 0.2s;flex-shrink:0;
+}
+.popup-close:hover{background:var(--orange);color:#fff}
+
+.popup-body{
+  padding:1.6rem 1.8rem;
+  overflow-y:auto;flex:1;
+}
+.popup-body::-webkit-scrollbar{width:5px}
+.popup-body::-webkit-scrollbar-track{background:var(--cream-dark);border-radius:10px}
+.popup-body::-webkit-scrollbar-thumb{background:var(--orange-light);border-radius:10px}
+
+/* ── CONTACT POPUP ── */
+.contact-grid{display:flex;flex-direction:column;gap:1rem}
+.contact-row{
+  display:flex;align-items:center;gap:1rem;
+  background:#fff;border:1px solid var(--cream-dark);
+  border-radius:16px;padding:1.1rem 1.3rem;
+  transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;
+  text-decoration:none;
+}
+.contact-row:hover{
+  border-color:var(--orange);
+  box-shadow:0 6px 24px rgba(255,124,46,0.15);
+  transform:translateY(-2px);
+}
+.contact-row-icon{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+}
+.contact-row-label{font-size:0.72rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.contact-row-value{font-family:'Syne',sans-serif;font-weight:700;font-size:0.97rem;color:var(--brown)}
+.contact-row-action{margin-left:auto;font-size:0.75rem;color:var(--orange);font-weight:600;white-space:nowrap}
+.contact-note{
+  margin-top:1.2rem;
+  background:var(--orange-pale);border-radius:12px;padding:0.9rem 1rem;
+  font-size:0.82rem;color:var(--text-mid);line-height:1.6;
+  border:1px solid rgba(255,124,46,0.15);
+}
+
+/* ── LEGAL POPUPS ── */
+.legal-section{margin-bottom:1.8rem}
+.legal-section:last-child{margin-bottom:0}
+.legal-h2{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;
+  color:var(--brown);margin-bottom:0.6rem;
+  padding-bottom:0.4rem;
+  border-bottom:2px solid var(--orange-pale);
+}
+.legal-h3{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--brown-mid);margin:0.9rem 0 0.3rem}
+.legal-p{font-size:0.87rem;color:var(--text-soft);line-height:1.75;margin-bottom:0.5rem}
+.legal-ul{padding-left:1.2rem;display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.5rem}
+.legal-ul li{font-size:0.87rem;color:var(--text-soft);line-height:1.65}
+.legal-date{
+  display:inline-block;background:var(--orange-pale);color:var(--orange-dark);
+  font-size:0.75rem;font-weight:600;padding:0.25rem 0.7rem;
+  border-radius:999px;margin-bottom:1.2rem;
+}
+.legal-highlight{
+  background:var(--orange-pale);border-left:3px solid var(--orange);
+  border-radius:0 10px 10px 0;padding:0.7rem 1rem;
+  font-size:0.85rem;color:var(--text-mid);line-height:1.65;margin:0.8rem 0;
+}
+
+@media(max-width:560px){
+  .popup-box{border-radius:20px}
+  .popup-head{padding:1.2rem 1.3rem 1rem}
+  .popup-body{padding:1.2rem 1.3rem}
+  .contact-row-action{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- cursor -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Wrk<em>Up</em></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#categories">Services</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="#" class="btn-nav-fill" onclick="handleDownloadClick(event)">Download App</a>
+  </div>
+  <div class="ham" onclick="toggleMob()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <a href="#how" onclick="toggleMob()">How it works</a>
+  <a href="#features" onclick="toggleMob()">Features</a>
+  <a href="#categories" onclick="toggleMob()">Services</a>
+  <a href="#download" onclick="toggleMob()">Download</a>
+  <a href="#faq" onclick="toggleMob()">FAQ</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grain"></div>
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <!-- <div class="hero-eyebrow"><div class="dot"></div>Now live in your city</div> -->
+      <h1>
+        India's skilled, semi skilled workers,<br/>
+        <span class="orange">one tap</span> away.<br/>
+        <span class="fade">No middlemen.</span>
+      </h1>
+      <p class="hero-sub">WrkUp connects Aadhaar-verified workers — masons, electricians, plumbers — directly to clients nearby. Post a job, get matched in minutes.</p>
+      <div class="hero-btns">
+        <a href="#download" class="btn-hero-fill">Download App</a>
+        <a href="#how" class="btn-hero-ghost">▶ How it works</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hs-num">12<span>K+</span></div>
+          <div class="hs-label">Verified workers</div>
+        </div>
+        <div>
+          <div class="hs-num">50<span>K+</span></div>
+          <div class="hs-label">Jobs done</div>
+        </div>
+        <div>
+          <div class="hs-num">4.8<span>★</span></div>
+          <div class="hs-label">Avg rating</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="fbadge fb1">
+        <div class="fb-icon" style="background:#fff0e6">✅</div>
+        <div><div class="fb-title">Aadhaar Verified</div><div class="fb-sub">Trusted partner nearby</div></div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ps-top">
+            <div class="ps-hello">Good morning,</div>
+            <div class="ps-name">Rahul Kumar 👷</div>
+            <div class="ps-bal">₹1,250.75</div>
+            <div class="ps-online-row">
+              <div class="ps-onlinedot"></div>
+              <div class="ps-onlabel">Online · receiving jobs</div>
+            </div>
+          </div>
+          <div class="ps-sec">NEARBY JOBS (3)</div>
+          <div class="jm">
+            <div class="jm-row">
+              <div class="jm-badge mason">Mason</div>
+              <div class="jm-dist">2.5 km</div>
+            </div>
+            <div class="jm-title">Bricklaying — 3 days</div>
+            <div class="jm-sub">₹180/day · Starts tomorrow</div>
+            <div class="jm-btns">
+              <div class="jm-acc">Accept</div>
+              <div class="jm-rej">Reject</div>
+            </div>
+          </div>
+          <div class="jm">
+            <div class="jm-row">
+              <div class="jm-badge elec">Electrician</div>
+              <div class="jm-dist">1.1 km</div>
+            </div>
+            <div class="jm-title">Office rewiring work</div>
+            <div class="jm-sub">₹220/day · 2 days</div>
+            <div class="jm-btns">
+              <div class="jm-acc">Accept</div>
+              <div class="jm-rej">Reject</div>
+            </div>
+          </div>
+          <div class="jm">
+            <div class="jm-row">
+              <div class="jm-badge plumb">Plumber</div>
+              <div class="jm-dist">0.8 km</div>
+            </div>
+            <div class="jm-title">Burst pipe · Urgent</div>
+            <div class="jm-sub">₹250/day · Today</div>
+            <div class="jm-btns">
+              <div class="jm-acc">Accept</div>
+              <div class="jm-rej">Reject</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fbadge fb2">
+        <div class="fb-icon" style="background:#fff0e6">💰</div>
+        <div><div class="fb-title">Payment received</div><div class="fb-sub">₹450 added to wallet</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-inner" id="marq">
+    <div class="marquee-item">🔒 Aadhaar Verified</div>
+    <div class="marquee-item">⚡ Instant Matching</div>
+    <div class="marquee-item">💰 Secure Payments via UPI</div>
+    <div class="marquee-item">📍 GPS Radius Discovery</div>
+    <div class="marquee-item">⭐ 4.8 Average Rating</div>
+    <div class="marquee-item">🇮🇳 Made for India</div>
+    <div class="marquee-item">💬 In-App Chat</div>
+    <div class="marquee-item">📊 Daily Operations</div>
+    <div class="marquee-item">🔒 Aadhaar Verified</div>
+    <div class="marquee-item">⚡ Instant Matching</div>
+    <div class="marquee-item">💰 Secure Payments via UPI</div>
+    <div class="marquee-item">📍 GPS Radius Discovery</div>
+    <div class="marquee-item">⭐ 4.8 Average Rating</div>
+    <div class="marquee-item">🇮🇳 Made for India</div>
+    <div class="marquee-item">💬 In-App Chat</div>
+    <div class="marquee-item">📊 Daily Operations</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="s-tag">How it works</div>
+    <h2 class="s-title">Simple as ordering<br/>a ride</h2>
+    <p class="s-sub">Whether you need a worker or you are one, WrkUp gets you matched in minutes — not days.</p>
+
+    <div class="how-grid">
+      <div class="reveal-left">
+        <div class="htabs">
+          <button class="htab active" onclick="switchTab('client',this)">For Clients(Employers)</button>
+          <button class="htab" onclick="switchTab('partner',this)">For Partners(Workers)</button>
+        </div>
+        <div class="steps" id="tab-client">
+          <div class="step vis"><div class="step-n">1</div><div><div class="step-title">Post your job</div><div class="step-desc">Describe the work, pick a date, pin your location, set the rate. Under 2 minutes.</div></div></div>
+          <div class="step vis" style="transition-delay:.1s"><div class="step-n">2</div><div><div class="step-title">Get matched instantly</div><div class="step-desc">WrkUp pings verified workers within your radius. See who's available right now.</div></div></div>
+          <div class="step vis" style="transition-delay:.2s"><div class="step-n">3</div><div><div class="step-title">Worker arrives</div><div class="step-desc">Track the worker on a live map. Call if Needed.</div></div></div>
+          <div class="step vis" style="transition-delay:.3s"><div class="step-n">4</div><div><div class="step-title">Pay & review</div><div class="step-desc">Pay securely via UPI or card when the job's done. Rate the experience.</div></div></div>
+        </div>
+        <div class="steps" id="tab-partner" style="display:none">
+          <div class="step vis"><div class="step-n">1</div><div><div class="step-title">Register your skills</div><div class="step-desc">Pick from 20+ categories. Upload certificates if you have them.</div></div></div>
+          <div class="step vis" style="transition-delay:.1s"><div class="step-n">2</div><div><div class="step-title">Verify with Aadhaar</div><div class="step-desc">Quick OTP verification gets you a verified badge — clients trust you more.</div></div></div>
+          <div class="step vis" style="transition-delay:.2s"><div class="step-n">3</div><div><div class="step-title">Go online, get jobs</div><div class="step-desc">Toggle online and receive real-time job alerts for work near you. Accept what fits.</div></div></div>
+          <div class="step vis" style="transition-delay:.3s"><div class="step-n">4</div><div><div class="step-title">Complete & get paid</div><div class="step-desc">Payment hits your WrkUp wallet immediately. Withdraw to any bank account.</div></div></div>
+        </div>
+      </div>
+
+      <div class="reveal-right">
+        <div class="map-vis">
+          <div class="map-bg"></div>
+          <div class="map-grid"></div>
+          <div class="mpin p p1"></div>
+          <div class="mpin p p2"></div>
+          <div class="mpin p p3"></div>
+          <div class="mpin c c1"></div>
+          <div class="mradius"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WATCH & LEARN -->
+<section class="watch-guide" id="watch">
+  <div class="container">
+    <div class="s-tag">Watch & learn</div>
+    <h2 class="s-title">See it in action<br/>before you download</h2>
+    <p class="s-sub">Two-minute walkthroughs — one for hiring, one for earning. Watch whichever side of WrkUp is yours.</p>
+
+    <div class="wg-grid">
+      <!-- CLIENT VIDEO -->
+      <div class="wg-card reveal">
+        <div class="wg-video-wrap">
+         <iframe
+      src="https://www.youtube.com/embed/3PrN5xXyaik"
+      title="How to post a job & hire on WrkUp"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+        </div>
+        <div class="wg-tagrow">
+          <span class="wg-badge client">For Clients</span>
+          <span class="wg-dur">1:45</span>
+        </div>
+        <div class="wg-body">
+          <div class="wg-title">How to post a job & hire</div>
+          <p class="wg-desc">From posting a job to tracking your worker on the map and paying via UPI — start to finish.</p>
+        </div>
+      </div>
+
+      <!-- PARTNER VIDEO -->
+      <div class="wg-card reveal" style="transition-delay:.1s">
+        <div class="wg-video-wrap">
+           <iframe
+      src="https://www.youtube.com/embed/LRUlC4XL31k"
+      title="How to register & get jobs on WrkUp"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+        </div>
+        <div class="wg-tagrow">
+          <span class="wg-badge partner">For Partners</span>
+          <span class="wg-dur">1:52</span>
+        </div>
+        <div class="wg-body">
+          <div class="wg-title">How to register & get jobs</div>
+          <p class="wg-desc">Aadhaar verification, going online, accepting jobs, and withdrawing your earnings.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IS IT FOR -->
+<section class="who" id="partner">
+  <div class="container">
+    <div class="s-tag" style="background:rgba(255,124,46,0.15);color:var(--orange-light);border-color:rgba(255,124,46,0.3)">Two sides, one platform</div>
+    <h2 class="s-title reveal" style="color:#fff">Built for workers<br/>and employers</h2>
+    <div class="who-grid">
+      <div class="who-card partner reveal">
+        <div class="wc-blob"></div>
+        <div class="wc-tag">For Partners (Workers)</div>
+        <div class="wc-title">Earn more,<br/>on your terms</div>
+        <p class="wc-desc">No more depending on contractors or middlemen. Your skills, your schedule, your earnings — all in one app.</p>
+        <ul class="wc-list">
+          <li><span class="wc-check-p">✓</span> Real-time job alerts in your area</li>
+          <li><span class="wc-check-p">✓</span> Accept or reject any job freely</li>
+          <li><span class="wc-check-p">✓</span> Wallet with instant bank withdrawal</li>
+          <li><span class="wc-check-p">✓</span> Build reputation with verified reviews</li>
+          <li><span class="wc-check-p">✓</span> Aadhaar-backed trusted profile</li>
+        </ul>
+        <a href="#download" class="wc-btn">Join as a Partner →</a>
+      </div>
+      <div class="who-card client reveal" style="transition-delay:.15s">
+        <div class="wc-blob"></div>
+        <div class="wc-tag">For Clients (Employers)</div>
+        <div class="wc-title">Hire faster,<br/>pay smarter</div>
+        <p class="wc-desc">Stop searching WhatsApp groups. Post a job, see verified workers on a live map, hire in minutes.</p>
+        <ul class="wc-list">
+          <li><span class="wc-check-c">✓</span> Post a job in under 2 minutes</li>
+          <li><span class="wc-check-c">✓</span> See live worker availability on map</li>
+          <li><span class="wc-check-c">✓</span> Track multiple workers daily</li>
+          <li><span class="wc-check-c">✓</span> Secure payments via UPI & cards</li>
+          <li><span class="wc-check-c">✓</span> Extend, review or dispute easily</li>
+        </ul>
+        <a href="#download" class="wc-btn">Download & Hire →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="s-tag">Platform features</div>
+    <h2 class="s-title">Everything you'd<br/>expect, and more</h2>
+    <div class="feat-grid">
+      <div class="feat-card reveal"><div class="feat-icon">📍</div><div class="feat-title">Uber-style radius matching</div><p class="feat-desc">GPS-powered job discovery. You see what's available within your radius right now — not a stale list.</p></div>
+      <div class="feat-card reveal" style="transition-delay:.1s"><div class="feat-icon">🔒</div><div class="feat-title">Aadhaar verification</div><p class="feat-desc">Every partner is verified with Aadhaar OTP. Clients hire with confidence knowing who's showing up.</p></div>
+      <div class="feat-card reveal" style="transition-delay:.2s"><div class="feat-icon">💬</div><div class="feat-title">In-app chat</div><p class="feat-desc">Clients and partners communicate directly without sharing personal numbers. Safe and seamless.(In developing phase...)</p></div>
+      <div class="feat-card reveal" style="transition-delay:.05s"><div class="feat-icon">💰</div><div class="feat-title">Instant wallet payouts</div><p class="feat-desc">Payment reaches partners the moment a job is confirmed. Withdraw to any bank or UPI ID anytime.</p></div>
+      <div class="feat-card reveal" style="transition-delay:.15s"><div class="feat-icon">📊</div><div class="feat-title">Daily operations dashboard</div><p class="feat-desc">Managing multiple workers? Track hours, see who's active, extend or pay — all from one screen.</p></div>
+      <div class="feat-card reveal" style="transition-delay:.25s"><div class="feat-icon">⭐</div><div class="feat-title">Verified reviews</div><p class="feat-desc">Only real clients who completed a job can leave reviews. A genuine reputation system that means something.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<div class="numbers">
+  <div class="numbers-grid">
+    <div class="ncard reveal"><div class="n-num" id="cnt1">0</div><div class="n-label">Verified workers active</div></div>
+    <div class="ncard reveal" style="transition-delay:.1s"><div class="n-num" id="cnt2">0</div><div class="n-label">Jobs completed this month</div></div>
+    <div class="ncard reveal" style="transition-delay:.2s"><div class="n-num" id="cnt3">0</div><div class="n-label">Cities covered</div></div>
+    <div class="ncard reveal" style="transition-delay:.3s"><div class="n-num" id="cnt4">0</div><div class="n-label">Average rating</div></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="container">
+    <div class="s-tag">Service categories</div>
+    <h2 class="s-title">Whatever you need<br/>built or fixed</h2>
+    <p class="s-sub">WrkUp partners cover 20+ categories of skilled and semi-skilled work across India.</p>
+    <div class="cat-grid reveal">
+      <div class="cat-card"><div class="cat-emoji">🧱</div><div class="cat-name">Mason</div><div class="cat-count">1,200+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🔌</div><div class="cat-name">Electrician</div><div class="cat-count">980+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🚿</div><div class="cat-name">Plumber</div><div class="cat-count">750+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🪚</div><div class="cat-name">Carpenter</div><div class="cat-count">640+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🎨</div><div class="cat-name">Painter</div><div class="cat-count">520+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🧹</div><div class="cat-name">Cleaner</div><div class="cat-count">890+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🌿</div><div class="cat-name">Gardener</div><div class="cat-count">310+ workers</div></div>
+      <div class="cat-card"><div class="cat-emoji">🚗</div><div class="cat-name">Driver</div><div class="cat-count">420+ workers</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container testi-title-wrap">
+    <div class="s-tag" style="background:rgba(255,124,46,0.15);color:var(--orange-light);border-color:rgba(255,124,46,0.3)">Real experiences</div>
+    <h2 class="s-title">What they say<br/>about WrkUp</h2>
+  </div>
+  <div class="testi-overflow">
+    <div class="testi-track">
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Found a mason for a 3-day job within 20 minutes of posting. He was Aadhaar verified, showed up on time and did excellent work."</p><div class="tc-author"><div class="tc-av" style="background:#ff7c2e">R</div><div><div class="tc-name">Rajesh Sharma</div><div class="tc-role">Client · Delhi</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"I was unemployed for 3 months. Registered on WrkUp, got my first job the same day, ₹5,400 in my wallet by evening."</p><div class="tc-author"><div class="tc-av" style="background:#1565c0">M</div><div><div class="tc-name">Mohammed Irfan</div><div class="tc-role">Electrician · Mumbai</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★☆</div><p class="tc-text">"The in-app chat means I don't have to share my number with strangers. The UPI payment worked perfectly. Highly recommend."</p><div class="tc-author"><div class="tc-av" style="background:#7b1fa2">P</div><div><div class="tc-name">Priya Menon</div><div class="tc-role">Client · Bangalore</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"The daily operations dashboard is incredible — I see all my workers, their status, and pay them at the end of the day in one tap."</p><div class="tc-author"><div class="tc-av" style="background:#e65100">A</div><div><div class="tc-name">Arjun Patel</div><div class="tc-role">Contractor · Ahmedabad</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Before WrkUp I had no digital presence. Now I have 47 reviews, 4.9 rating, and earn 40% more than walk-in work."</p><div class="tc-author"><div class="tc-av" style="background:#00695c">S</div><div><div class="tc-name">Suresh Kumar</div><div class="tc-role">Plumber · Hyderabad</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Simple to use, fast to get started. I had my Aadhaar verified and accepted my first job within 2 hours of downloading."</p><div class="tc-author"><div class="tc-av" style="background:#c62828">D</div><div><div class="tc-name">Dinesh Yadav</div><div class="tc-role">Carpenter · Pune</div></div></div></div>
+      <!-- duplicates for loop -->
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Found a mason for a 3-day job within 20 minutes of posting. He was Aadhaar verified, showed up on time and did excellent work."</p><div class="tc-author"><div class="tc-av" style="background:#ff7c2e">R</div><div><div class="tc-name">Rajesh Sharma</div><div class="tc-role">Client · Delhi</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"I was unemployed for 3 months. Registered on WrkUp, got my first job the same day, ₹5,400 in my wallet by evening."</p><div class="tc-author"><div class="tc-av" style="background:#1565c0">M</div><div><div class="tc-name">Mohammed Irfan</div><div class="tc-role">Electrician · Mumbai</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★☆</div><p class="tc-text">"The in-app chat means I don't have to share my number with strangers. The UPI payment worked perfectly. Highly recommend."</p><div class="tc-author"><div class="tc-av" style="background:#7b1fa2">P</div><div><div class="tc-name">Priya Menon</div><div class="tc-role">Client · Bangalore</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"The daily operations dashboard is incredible — I see all my workers, their status, and pay them at the end of the day in one tap."</p><div class="tc-author"><div class="tc-av" style="background:#e65100">A</div><div><div class="tc-name">Arjun Patel</div><div class="tc-role">Contractor · Ahmedabad</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Before WrkUp I had no digital presence. Now I have 47 reviews, 4.9 rating, and earn 40% more than walk-in work."</p><div class="tc-author"><div class="tc-av" style="background:#00695c">S</div><div><div class="tc-name">Suresh Kumar</div><div class="tc-role">Plumber · Hyderabad</div></div></div></div>
+      <div class="tcard"><div class="tc-stars">★★★★★</div><p class="tc-text">"Simple to use, fast to get started. I had my Aadhaar verified and accepted my first job within 2 hours of downloading."</p><div class="tc-author"><div class="tc-av" style="background:#c62828">D</div><div><div class="tc-name">Dinesh Yadav</div><div class="tc-role">Carpenter · Pune</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="download" id="download">
+  <div class="container" style="text-align:center">
+    <div class="s-tag" style="margin:0 auto 1rem">Get the app</div>
+    <h2 class="s-title reveal">Download WrkUp<br/>today — it's free</h2>
+    <p class="dl-subtitle reveal">Free to download. Free to post your first job. Free to register as a partner.</p>
+    <div class="dl-btns reveal">
+      <a href="#" class="dl-btn">
+        <div class="dl-icon">🍎</div>
+        <div><div class="dl-small">Download on the</div><div class="dl-store">App Store</div></div>
+      </a>
+      <a href="#" class="dl-btn">
+        <div class="dl-icon">▶</div>
+        <div><div class="dl-small">Get it on</div><div class="dl-store">Google Play</div></div>
+      </a>
+    </div>
+    <div class="qr-row reveal">
+      <div class="qr-item">
+        <div class="qr-box"><div class="qr-inner"></div></div>
+        <div class="qr-label">Scan for iOS</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-box"><div class="qr-inner"></div></div>
+        <div class="qr-label">Scan for Android</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="s-tag">FAQ</div>
+    <h2 class="s-title" style="text-align:center">Common questions</h2>
+    <div class="faq-inner">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How does WrkUp verify workers?<span class="faq-arrow">+</span></button><div class="faq-a">Every partner completes Aadhaar OTP verification before going live. They can also upload skill certificates (ITI, NCVT) reviewed by our team. The verified badge appears on every profile.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it free to download and use?<span class="faq-arrow">+</span></button><div class="faq-a">Yes — downloading the app, posting jobs, and registering as a partner are all free. WrkUp charges a 0% platform fee on completed payments, deducted transparently before funds reach the partner's wallet.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How quickly can I find a worker?<span class="faq-arrow">+</span></button><div class="faq-a">In areas with active partners, matches happen within 5–15 minutes. WrkUp pings all available workers within your chosen radius the moment you post a job.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What payment methods are supported?<span class="faq-arrow">+</span></button><div class="faq-a">Clients can pay via UPI (GPay, PhonePe, Paytm), debit/credit cards, net banking, or their WrkUp wallet. Partners withdraw earnings to any Indian bank account or UPI ID.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What if a job goes wrong?<span class="faq-arrow">+</span></button><div class="faq-a">Raise a dispute directly from the app within 24 hours of a job. Our support team reviews all disputes within 48 hours. Workers who repeatedly receive valid disputes are removed from the platform.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Can I hire multiple workers at once?<span class="faq-arrow">+</span></button><div class="faq-a">Yes — when posting a job, set the number of workers needed (1–10). The Daily Operations dashboard lets you track all of them in one place, see their status, and pay at the end of the day.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="f-logo">Work<em>De</em></div>
+      <p class="f-desc">Connecting skilled workers and employers across India. No middlemen, no hassle — just work done right.</p>
+      <div class="f-social">
+        <a href="https://x.com/WrkUpp" class="f-soc-btn">𝕏</a>
+        <a href="https://www.linkedin.com/in/wrkup-59119843a/" class="f-soc-btn">in</a>
+        <a href="https://www.instagram.com/wrk_up?stkn=MTF1Yno2OTQzbWJsaw==" class="f-soc-btn">▶</a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#categories">Services</a></li>
+        <li><a href="#download">Download</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press kit</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+  <h4>Support</h4>
+  <ul>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#" onclick="openPopup('contact');return false;">Contact us</a></li>
+    <li><a href="#" onclick="openPopup('privacy');return false;">Privacy Policy</a></li>
+    <li><a href="#" onclick="openPopup('terms');return false;">Terms of Service</a></li>
+  </ul>
+</div>
+
+  </div>
+  <div class="footer-bottom">
+  <div>© 2026 WrkUp. All rights reserved.</div>
+  <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;justify-content:center">
+    <a href="#" onclick="openPopup('privacy');return false;"
+       style="color:rgba(255,255,255,0.35);font-size:0.8rem;transition:color 0.2s"
+       onmouseover="this.style.color='#ff9a5e'"
+       onmouseout="this.style.color='rgba(255,255,255,0.35)'">Privacy Policy</a>
+    <a href="#" onclick="openPopup('terms');return false;"
+       style="color:rgba(255,255,255,0.35);font-size:0.8rem;transition:color 0.2s"
+       onmouseover="this.style.color='#ff9a5e'"
+       onmouseout="this.style.color='rgba(255,255,255,0.35)'">Terms of Service</a>
+    <a href="#" onclick="openPopup('contact');return false;"
+       style="color:rgba(255,255,255,0.35);font-size:0.8rem;transition:color 0.2s"
+       onmouseover="this.style.color='#ff9a5e'"
+       onmouseout="this.style.color='rgba(255,255,255,0.35)'">Contact Us</a>
+    <span style="color:rgba(255,255,255,0.2)">·</span>
+    <span>Made with ❤️ for India's workforce</span>
+  </div>
+</div>
+
+</footer>
+
+<script>
+/* ─── CURSOR ─── */
+const cur=document.getElementById('cur'),ring=document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+function lerp(a,b,t){return a+(b-a)*t}
+function animRing(){rx=lerp(rx,mx,0.12);ry=lerp(ry,my,0.12);ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)}
+animRing();
+document.querySelectorAll('a,button,.cat-card,.feat-card,.jm').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.classList.add('expand');ring.classList.add('expand')});
+  el.addEventListener('mouseleave',()=>{cur.classList.remove('expand');ring.classList.remove('expand')});
+});
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>30);
+});
+
+/* ─── MOBILE MENU ─── */
+function toggleMob(){document.getElementById('mobMenu').classList.toggle('open')}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('mobMenu');
+  if(!m.contains(e.target)&&!document.querySelector('.ham').contains(e.target))m.classList.remove('open');
+});
+
+/* ─── HOW TABS ─── */
+function switchTab(t,btn){
+  document.querySelectorAll('.htab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-client').style.display=t==='client'?'flex':'none';
+  document.getElementById('tab-partner').style.display=t==='partner'?'flex':'none';
+}
+
+/* ─── FAQ ─── */
+function toggleFaq(btn){
+  const a=btn.nextElementSibling,open=btn.classList.contains('open');
+  document.querySelectorAll('.faq-q').forEach(q=>{q.classList.remove('open');q.nextElementSibling.classList.remove('open')});
+  if(!open){btn.classList.add('open');a.classList.add('open')}
+}
+
+/* ─── SCROLL REVEAL ─── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')});
+},{threshold:0.12});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.step').forEach(el=>obs.observe(el));
+
+/* ─── COUNT UP ANIMATION ─── */
+function countUp(el,target,suffix,duration=1800){
+  const start=performance.now();
+  const isFloat=target%1!==0;
+  function update(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=isFloat?(target*ease).toFixed(1):(Math.round(target*ease));
+    el.textContent=val+suffix;
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const cntObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      countUp(document.getElementById('cnt1'),12000,'+');
+      countUp(document.getElementById('cnt2'),3500,'+');
+      countUp(document.getElementById('cnt3'),28,'');
+      countUp(document.getElementById('cnt4'),4.8,'★');
+      cntObs.disconnect();
+    }
+  });
+},{threshold:0.3});
+cntObs.observe(document.querySelector('.numbers'));
+
+/* ─── PARALLAX HERO BLOBS ─── */
+document.addEventListener('mousemove',e=>{
+  const xp=(e.clientX/window.innerWidth-0.5)*20;
+  const yp=(e.clientY/window.innerHeight-0.5)*20;
+  const b1=document.querySelector('.hero-blob1');
+  const b2=document.querySelector('.hero-blob2');
+  if(b1)b1.style.transform=`translate(${xp}px,${yp}px)`;
+  if(b2)b2.style.transform=`translate(${-xp*0.6}px,${-yp*0.6}px)`;
+});
+/* ─── POPUPS ─── */
+function openPopup(id){
+  document.querySelectorAll('.popup-overlay.open').forEach(el=>el.classList.remove('open'));
+  const overlay=document.getElementById('popup-'+id);
+  if(!overlay)return;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePopup(id){
+  const overlay=document.getElementById('popup-'+id);
+  if(!overlay)return;
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+function overlayClose(e,id){
+  if(e.target===document.getElementById('popup-'+id))closePopup(id);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.popup-overlay.open').forEach(el=>{
+      closePopup(el.id.replace('popup-',''));
+    });
+  }
+});
+
+
+/* ─── SMART DOWNLOAD ROUTING ─── */
+function handleDownloadClick(e){
+  e.preventDefault();
+  const ua = navigator.userAgent || navigator.vendor;
+
+  if(/android/i.test(ua)){
+    // Direct APK download — replace with your real hosted APK URL
+    const link = document.createElement('a');
+    link.href = 'https://yourdomain.com/downloads/wrkup.apk';
+    link.download = 'WrkUp.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else if(/iPad|iPhone|iPod/.test(ua)){
+    // Straight to App Store — replace with your real App Store URL
+    window.location.href = 'https://apps.apple.com/app/idYOUR_APP_ID';
+  } else {
+    // Desktop — scroll to the download section with QR codes
+    document.getElementById('download').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+
+</script>
+<!-- ══════════════════════════════════════ -->
+<!--  CONTACT US POPUP                     -->
+<!-- ══════════════════════════════════════ -->
+<div class="popup-overlay" id="popup-contact" onclick="overlayClose(event,'contact')">
+  <div class="popup-box contact-box">
+    <div class="popup-head">
+      <div class="popup-head-left">
+        <div class="popup-icon">📬</div>
+        <div class="popup-title">Contact Us</div>
+      </div>
+      <button class="popup-close" onclick="closePopup('contact')">✕</button>
+    </div>
+    <div class="popup-body">
+      <p style="font-size:0.88rem;color:var(--text-soft);line-height:1.7;margin-bottom:1.2rem">
+        We'd love to hear from you. Reach us on any channel below — we typically respond within a few hours.
+      </p>
+      <div class="contact-grid">
+
+        <!-- Email -->
+        <a class="contact-row" href="mailto:wrkup.app@gmail.com">
+          <div class="contact-row-icon" style="background:#fff0e6">📧</div>
+          <div>
+            <div class="contact-row-label">Email</div>
+            <div class="contact-row-value">wrkup.app@gmail.com</div>
+          </div>
+          <div class="contact-row-action">Send mail →</div>
+        </a>
+
+        <!-- Telegram -->
+        <a class="contact-row" href="https://t.me/WrkUpp" target="_blank">
+          <div class="contact-row-icon" style="background:#e8f4fd">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="#2AABEE"/>
+              <path d="M5.5 11.5l10-4-3.5 10-2-3.5-4.5-2.5z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+              <path d="M10 14l1-2.5 3-2" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="contact-row-label">Telegram</div>
+            <div class="contact-row-value">@WrkUpp</div>
+          </div>
+          <div class="contact-row-action">Open Telegram →</div>
+        </a>
+
+        <!-- WhatsApp -->
+        <a class="contact-row" href="https://wa.me/918986769738" target="_blank">
+          <div class="contact-row-icon" style="background:#e8fde8">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="#25D366"/>
+              <path d="M17.5 14.5c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.1-.8 1-1 1.2-.4.2-.7 0a8.5 8.5 0 01-2.5-1.5 9.3 9.3 0 01-1.7-2.1c-.2-.3 0-.5.1-.7l.5-.6c.1-.2.2-.4.3-.6s0-.4-.1-.6L8.8 7c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2 2.2 3.4 5.4 4.7c.8.3 1.4.5 1.8.6.8.2 1.5.2 2 .1.6-.1 1.8-.7 2.1-1.4.3-.7.3-1.2.2-1.4-.1-.1-.3-.2-.6-.3z" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <div class="contact-row-label">WhatsApp</div>
+            <div class="contact-row-value">+91 89867 69738</div>
+          </div>
+          <div class="contact-row-action">Chat now →</div>
+        </a>
+
+      </div>
+      <div class="contact-note">
+        💡 For fastest response, reach us on <strong>WhatsApp or Telegram</strong>. For formal queries, email us.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  PRIVACY POLICY POPUP                 -->
+<!-- ══════════════════════════════════════ -->
+<div class="popup-overlay" id="popup-privacy" onclick="overlayClose(event,'privacy')">
+  <div class="popup-box">
+    <div class="popup-head">
+      <div class="popup-head-left">
+        <div class="popup-icon">🔒</div>
+        <div class="popup-title">Privacy Policy</div>
+      </div>
+      <button class="popup-close" onclick="closePopup('privacy')">✕</button>
+    </div>
+    <div class="popup-body">
+      <span class="legal-date">Last updated: September 18, 2026</span>
+
+      <div class="legal-section">
+        <div class="legal-h2">1. Who We Are</div>
+        <p class="legal-p">WrkUp ("we", "our", "us") is a hyperlocal gig marketplace that connects verified skilled workers (Partners) with people and businesses (Clients) across India. This Privacy Policy explains how we collect, use, store, and protect your personal information when you use the WrkUp mobile app or website.</p>
+        <div class="legal-highlight">By using WrkUp, you agree to the collection and use of information as described in this policy.</div>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">2. Information We Collect</div>
+        <div class="legal-h3">2.1 Information you provide directly</div>
+        <ul class="legal-ul">
+          <li>Full name, phone number, and email address during registration</li>
+          <li>Profile photo uploaded by you</li>
+          <li>Aadhaar number (stored only as masked last 4 digits after verification)</li>
+          <li>Skill certificates and qualification documents uploaded by Partners</li>
+          <li>Job descriptions, location, and requirements posted by Clients</li>
+          <li>Bank account or UPI details added for withdrawals (Partners only)</li>
+          <li>Ratings and written feedback submitted after a job</li>
+          <li>Messages sent through our in-app chat feature</li>
+        </ul>
+        <div class="legal-h3">2.2 Information collected automatically</div>
+        <ul class="legal-ul">
+          <li>GPS location — collected only when the app is in use or a Partner is marked online. Background location is used only during active jobs so Clients can track their Partner.</li>
+          <li>Device identifiers (model, OS version) for push notification delivery</li>
+          <li>App usage data (screens viewed, features used) for product improvement</li>
+          <li>IP address and approximate location for fraud prevention</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">3. How We Use Your Information</div>
+        <ul class="legal-ul">
+          <li>To create and manage your account and profile</li>
+          <li>To match Partners with nearby job postings using GPS radius matching</li>
+          <li>To verify Partner identity through Aadhaar OTP (we do not store your full Aadhaar number)</li>
+          <li>To process payments and transfer earnings to Partner wallets</li>
+          <li>To send push notifications for new jobs, payment confirmations, and updates</li>
+          <li>To enable in-app chat without revealing personal phone numbers</li>
+          <li>To resolve disputes and provide customer support</li>
+          <li>To detect and prevent fraudulent activity</li>
+          <li>To improve features based on aggregated, anonymised usage data</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">4. Data Sharing</div>
+        <p class="legal-p">We do not sell your personal data. We share data only in these limited cases:</p>
+        <ul class="legal-ul">
+          <li><strong>Between users:</strong> When a job is accepted, the Client's job location and the Partner's name, photo, rating, and skills are shared to complete the job.</li>
+          <li><strong>Razorpay:</strong> Payment processing. Your payment details are handled directly by Razorpay under their privacy policy.</li>
+          <li><strong>Firebase (Google):</strong> Used for authentication (OTP), push notifications, and file storage.</li>
+          <li><strong>Legal requirements:</strong> We may disclose data to law enforcement if required by Indian law.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">5. Data Retention</div>
+        <p class="legal-p">We retain your account data while your account is active. If you delete your account, personal data is deleted within 30 days, except financial records which are retained for 7 years under Indian tax law.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">6. Your Rights</div>
+        <ul class="legal-ul">
+          <li><strong>Access:</strong> Request a copy of all personal data we hold about you</li>
+          <li><strong>Correction:</strong> Update details via the app's Edit Profile screen</li>
+          <li><strong>Deletion:</strong> Request account deletion by emailing wrkup.app@gmail.com</li>
+          <li><strong>Portability:</strong> Request your data in a machine-readable format</li>
+          <li><strong>Opt-out:</strong> Disable push notifications in app or device settings at any time</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">7. Security</div>
+        <p class="legal-p">We use HTTPS/TLS for all data in transit. Passwords are never stored — we use Firebase phone OTP. Aadhaar numbers are never stored in full. File uploads are stored in Firebase Storage with access controls.</p>
+        <p class="legal-p">If you suspect unauthorised access, contact us immediately at wrkup.app@gmail.com.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">8. Children's Privacy</div>
+        <p class="legal-p">WrkUp is intended for users aged 18 and above. We do not knowingly collect data from minors. Accounts found to belong to minors will be deleted immediately.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">9. Changes to This Policy</div>
+        <p class="legal-p">We may update this Privacy Policy. We will notify registered users of material changes via push notification or email. Continued use after changes constitutes acceptance.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">10. Contact</div>
+        <ul class="legal-ul">
+          <li>Email: wrkup.app@gmail.com</li>
+          <li>Telegram: @WrkUpp</li>
+          <li>WhatsApp: +91 89867 69738</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  TERMS OF SERVICE POPUP               -->
+<!-- ══════════════════════════════════════ -->
+<div class="popup-overlay" id="popup-terms" onclick="overlayClose(event,'terms')">
+  <div class="popup-box">
+    <div class="popup-head">
+      <div class="popup-head-left">
+        <div class="popup-icon">📄</div>
+        <div class="popup-title">Terms of Service</div>
+      </div>
+      <button class="popup-close" onclick="closePopup('terms')">✕</button>
+    </div>
+    <div class="popup-body">
+      <span class="legal-date">Last updated: September 18, 2026</span>
+
+      <div class="legal-section">
+        <div class="legal-h2">1. Acceptance of Terms</div>
+        <p class="legal-p">By downloading, installing, or using the WrkUp application or website, you agree to be bound by these Terms of Service. If you do not agree, do not use WrkUp.</p>
+        <div class="legal-highlight">WrkUp is a technology platform — we are not an employer, staffing agency, or party to any agreement between Partners and Clients.</div>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">2. Eligibility & Accounts</div>
+        <ul class="legal-ul">
+          <li>You must be at least 18 years old to use WrkUp</li>
+          <li>You must provide accurate and complete information during registration</li>
+          <li>You are responsible for maintaining the security of your account and OTP codes</li>
+          <li>One person may not create multiple accounts; duplicates will be removed</li>
+          <li>WrkUp may suspend or terminate accounts that violate these terms</li>
+          <li>Notify us immediately of any unauthorised access to your account</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">3. Partner (Worker) Terms</div>
+        <div class="legal-h3">3.1 Verification</div>
+        <ul class="legal-ul">
+          <li>Partners must complete Aadhaar OTP verification before being listed</li>
+          <li>Partners must accurately represent their skills and experience</li>
+          <li>Certificates uploaded must be genuine and valid</li>
+          <li>False or misleading information results in immediate termination</li>
+        </ul>
+        <div class="legal-h3">3.2 Job conduct</div>
+        <ul class="legal-ul">
+          <li>Partners must arrive on time and complete jobs to the agreed standard</li>
+          <li>Partners must maintain professional conduct with Clients at all times</li>
+          <li>Partners must not solicit Clients to transact outside the WrkUp platform</li>
+          <li>No-shows without prior notice are a policy violation</li>
+          <li>Three or more valid disputes in 90 days results in account suspension</li>
+        </ul>
+        <div class="legal-h3">3.3 Earnings & payments</div>
+        <ul class="legal-ul">
+          <li>WrkUp charges a 5% platform fee on all completed job payments</li>
+          <li>Earnings are credited to your WrkUp wallet upon Client payment confirmation</li>
+          <li>Withdrawals to bank accounts are processed within 1–3 business days</li>
+          <li>WrkUp is not responsible for delays caused by banking intermediaries</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">4. Client Terms</div>
+        <ul class="legal-ul">
+          <li>Clients must post accurate and truthful job descriptions</li>
+          <li>Clients must not use WrkUp to post jobs for illegal activities</li>
+          <li>Clients are responsible for providing a safe working environment for Partners</li>
+          <li>All payments must go through the WrkUp app — off-platform transactions void dispute protections</li>
+          <li>Clients must not contact Partners for work outside WrkUp for jobs found via the platform</li>
+          <li>Repeated false dispute claims will result in account suspension</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">5. Prohibited Conduct</div>
+        <ul class="legal-ul">
+          <li>Harassment, abuse, or discrimination of any kind towards other users</li>
+          <li>Posting false reviews or ratings</li>
+          <li>Attempting to circumvent the platform's fee system</li>
+          <li>Using the platform for any illegal purpose under Indian law</li>
+          <li>Sharing other users' personal information without consent</li>
+          <li>Creating fake accounts or impersonating other users</li>
+          <li>Using bots, scrapers, or automated tools on the platform</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">6. Payments & Refunds</div>
+        <p class="legal-p">All payments are processed through Razorpay. WrkUp does not store card or banking credentials.</p>
+        <ul class="legal-ul">
+          <li>Refunds may be issued following a successfully resolved dispute</li>
+          <li>Disputes must be raised within 24 hours of job completion</li>
+          <li>WrkUp's team makes final decisions on all refunds</li>
+          <li>Platform fees (5%) are non-refundable unless WrkUp is at fault</li>
+          <li>Refunds are processed to the original payment method within 5–7 business days</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">7. Limitation of Liability</div>
+        <p class="legal-p">We are not liable for: quality or safety of services performed by Partners; property damage or personal injury during a job; loss of earnings due to cancellations; technical issues caused by third-party services; or any indirect, incidental, or consequential damages from use of the platform.</p>
+        <p class="legal-p">Our maximum liability to any user is limited to platform fees paid in the 3 months preceding the claim.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">8. Intellectual Property</div>
+        <p class="legal-p">The WrkUp name, logo, app design, and all website content are owned by WrkUp and protected under Indian copyright law. User-generated content (reviews, photos) remains owned by the user but grants WrkUp a non-exclusive licence to display it on the platform.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">9. Termination</div>
+        <p class="legal-p">WrkUp may suspend or terminate any account violating these Terms, without notice in serious cases. Users may delete their account through app settings. Pending earnings are paid out after a 30-day verification period upon termination.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">10. Governing Law</div>
+        <p class="legal-p">These Terms are governed by the laws of India. Disputes are subject to the exclusive jurisdiction of courts in Jharkhand, India. We encourage resolution through our in-app support before legal action.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">11. Changes to Terms</div>
+        <p class="legal-p">We may update these Terms. Continued use after changes constitutes acceptance. Material changes will be communicated via push notification or email with at least 7 days' notice.</p>
+      </div>
+
+      <div class="legal-section">
+        <div class="legal-h2">12. Contact</div>
+        <ul class="legal-ul">
+          <li>Email: wrkup.app@gmail.com</li>
+          <li>Telegram: @WrkUpp</li>
+          <li>WhatsApp: +91 89867 69738</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
