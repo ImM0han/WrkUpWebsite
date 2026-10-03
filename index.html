@@ -1038,7 +1038,10 @@ html, body {
     <li><a href="#faq">FAQ</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="#" class="btn-nav-fill" onclick="handleDownloadClick(event)">Download App</a>
+    <a href="https://github.com/ImM0han/WorkDe/releases/latest/download/WrkUp.apk"
+   class="btn-nav-fill">
+  Download App
+</a>
   </div>
   <div class="ham" onclick="toggleMob()">
     <span></span><span></span><span></span>
@@ -1068,7 +1071,11 @@ html, body {
       </h1>
       <p class="hero-sub">WrkUp connects Aadhaar-verified workers — masons, electricians, plumbers — directly to clients nearby. Post a job, get matched in minutes.</p>
       <div class="hero-btns">
-        <a href="#" class="btn-hero-fill" onclick="handleDownloadClick(event)">Download App</a>
+        <a href="https://github.com/ImM0han/WorkDe/releases/latest/download/WrkUp.apk"
+   class="btn-hero-fill"
+   onclick="handleDownloadClick(event)">
+  Download App
+</a>
         <a href="#how" class="btn-hero-ghost">▶ How it works</a>
       </div>
 </div>
@@ -1313,14 +1320,14 @@ html, body {
 </section>
 
 <!-- NUMBERS -->
-<div class="numbers">
+<!-- <div class="numbers">
   <div class="numbers-grid">
     <div class="ncard reveal"><div class="n-num" id="cnt1">0</div><div class="n-label">Verified workers active</div></div>
     <div class="ncard reveal" style="transition-delay:.1s"><div class="n-num" id="cnt2">0</div><div class="n-label">Jobs completed this month</div></div>
     <div class="ncard reveal" style="transition-delay:.2s"><div class="n-num" id="cnt3">0</div><div class="n-label">Cities covered</div></div>
     <div class="ncard reveal" style="transition-delay:.3s"><div class="n-num" id="cnt4">0</div><div class="n-label">Average rating</div></div>
   </div>
-</div>
+</div> -->
 
 <!-- CATEGORIES -->
 <section class="categories" id="categories">
@@ -1367,7 +1374,7 @@ html, body {
 </section>
 
 <!-- DOWNLOAD -->
-<section class="download" id="download">
+<!-- <section class="download" id="download">
   <div class="container" style="text-align:center">
     <div class="s-tag" style="margin:0 auto 1rem">Get the app</div>
     <h2 class="s-title reveal">Download WrkUp<br/>today — it's free</h2>
@@ -1393,7 +1400,7 @@ html, body {
       </div>
     </div>
   </div>
-</section>
+</section> -->
 
 <!-- FAQ -->
 <section class="faq" id="faq">
@@ -1415,7 +1422,7 @@ html, body {
 <footer>
   <div class="footer-top">
     <div>
-      <div class="f-logo">Work<em>De</em></div>
+      <div class="f-logo">Wrk<em>Up</em></div>
       <p class="f-desc">Connecting skilled workers and employers across India. No middlemen, no hassle — just work done right.</p>
       <div class="f-social">
         <a href="https://x.com/WrkUpp" class="f-soc-btn">𝕏</a>
@@ -1595,8 +1602,6 @@ document.addEventListener('keydown',e=>{
   Optional version manifest:
       https://raw.githubusercontent.com/ImM0han/WrkUpWebsite/main/app-version.json
 */
-const WRKUP_APK_URL =
-  'https://github.com/ImM0han/WrkUpWebsite/releases/latest/download/WrkUp.apk';
 
 const WRKUP_VERSION_URL =
   'https://raw.githubusercontent.com/ImM0han/WrkUpWebsite/main/app-version.json';
@@ -1622,20 +1627,13 @@ function downloadWrkUpApk(){
   link.remove();
 }
 
-function handleDownloadClick(e){
-  if(e)e.preventDefault();
+const WRKUP_APK_URL =
+  'https://github.com/ImM0han/WorkDe/releases/latest/download/WrkUp.apk';
 
-  if(isAndroid()){
-    downloadWrkUpApk();
-  }else if(isIOS()){
-    // Keep the existing iOS route ready for a future App Store release.
-    window.location.href = 'https://apps.apple.com/app/idYOUR_APP_ID';
-  }else{
-    const downloadSection = document.getElementById('download');
-    if(downloadSection){
-      downloadSection.scrollIntoView({behavior:'smooth'});
-    }
-  }
+function handleDownloadClick(e) {
+  if (e) e.preventDefault();
+
+  window.location.href = WRKUP_APK_URL;
 }
 
 /*
